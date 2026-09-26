@@ -1527,6 +1527,24 @@ def _parse_dt(value: str) -> datetime:
         return datetime.now(timezone.utc)
 
 
+@app.get("/")
+@app.get("/v1")
+async def root():
+    return {
+        "status": "ok",
+        "service": "magicpin Vera Challenge Bot",
+        "team_name": TEAM_NAME,
+        "contact_email": TEAM_CONTACT_EMAIL,
+        "healthz": "/v1/healthz",
+        "metadata": "/v1/metadata",
+        "uptime_seconds": int(time.time() - START_TIME),
+        "contexts_loaded": store.counts(),
+        "endpoints": ["/v1/healthz", "/v1/metadata", "/v1/context", "/v1/tick", "/v1/reply", "/v1/teardown"],
+    }
+
+
+@app.get("/health")
+@app.get("/healthz")
 @app.get("/v1/healthz")
 async def healthz():
     # Deliberately touches nothing but in-memory counters - no LLM call, no
